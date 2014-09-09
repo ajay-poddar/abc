@@ -6,6 +6,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
 var multiparty = require('connect-multiparty');
+var controller = require('./controllers/events.js');
+var mongoose = require('mongoose');
+
+var app = express();
+
+mongoose.connect('mongodb://localhost/techfest');
+
 
 //Routes
 var viewPages = require('./routes/viewPages');
@@ -24,9 +31,20 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
+app.use(express.methodOverride());
 app.use(cookieParser());
 app.use(multiparty());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//developers
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
+}
+
+app.get('/document/:id?', controller.showEvent);
+app.put('/document', controller.insertEvent);
+app.del('/document/:id?', controller.deleteEvent);
+app.post('/document/:id?', controller.updateEvent);
 
 //Routes
 app.use('/', viewPages);

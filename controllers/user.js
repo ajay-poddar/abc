@@ -10,3 +10,4 @@ exports.create_user = function(req,res){
 			res.send(400,{"user" : err});
 	});
 };
+
